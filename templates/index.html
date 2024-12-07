@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 300px;
+        }
+        input[type="text"], input[type="submit"] {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #218838;
+        }
+        .output {
+            margin-top: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>URL Shortener</h1>
+        <form id="shortenForm">
+            <input type="text" id="url" name="url" placeholder="Enter your URL" required>
+            <input type="text" id="shortenedurl" name="shortenedurl" placeholder="Custom short URL" required>
+            <input type="submit" value="Shorten">
+        </form>
+        <div class="output" id="output"></div>
+    </div>
+
+    <script>
+        document.getElementById('shortenForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const url = document.getElementById('url').value;
+            const shortenedurl = document.getElementById('shortenedurl').value;
+
+            const response = await fetch('/shorten', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({ url, shortenedurl }),
+            });
+
+            const result = await response.json();
+            if (result.url) {
+                document.getElementById('output').innerHTML = `
+                    <p>Shortened URL created:</p>
+                    <a href="${window.location.origin}/${shortenedurl}" target="_blank">${window.location.origin}/${shortenedurl}</a>
+                `;
+            } else {
+                document.getElementById('output').textContent = 'Error creating shortened URL.';
+            }
+        });
+    </script>
+</body>
+</html>
